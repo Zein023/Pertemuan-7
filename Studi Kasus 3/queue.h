@@ -3,8 +3,10 @@
 #include "boolean.h"
 #include "linked.h"
 
-typedef address Queue;
-
+typedef struct{
+	address front;
+	address rear;
+}Queue; 
 void CreateQueue (Queue *Q);
 
 boolean is_Empty (Queue Q);

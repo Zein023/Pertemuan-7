@@ -3,11 +3,12 @@
 #include "queue.h"
 
 void CreateQueue(Queue *Q) {
-    *Q = NULL;  // Menginisialisasi queue kosong
+    (*Q).front = NULL;  // Menginisialisasi queue kosong
+    (*Q).rear = NULL;
 }
 
 boolean is_Empty(Queue Q) {
-    return (Q == NULL);
+    return (Q.front == NULL);
 }
 
 boolean is_full(Queue Q) {
@@ -15,16 +16,23 @@ boolean is_full(Queue Q) {
 }
 
 void EnQueue(Queue *Q, infotype X) {
-    address newNode = (address) malloc(sizeof(newNode));
+	address newNode;
+    Create_Node(&newNode);
     if (newNode == NULL) {
         printf("Gagal alokasi memori!\n");
         return;
     }
-
-    newNode->info = X;
-    newNode->next = NULL;
-
-    Ins_Akhir(Q, newNode);
+	if (!isEmpty(newNode)){
+		Isi_Node(&newNode, X);
+		if (is_Empty(*Q)){
+			Q->front = newNode;
+			Q->rear = newNode;
+		} else {
+			Ins_Akhir(&(Q->rear), newNode);
+    		Q->rear = newNode;
+		}
+	}
+    
 }
 
 
@@ -33,11 +41,7 @@ void deQueue(Queue *Q, infotype *X) {
         printf("Antrian kosong, tidak ada yang diproses.\n");
         return;
     }
-
-    address temp = *Q;
-    *X = temp->info; // Mengambil nilai dari node pertama
-    *Q = temp->next; // Menggeser head ke elemen berikutnya
-    free(temp);      // Menghapus node pertama
+	Del_Awal(&(Q->front), X);
 }
 
 void ambilAntrian(Queue *Q, infotype *antrian) {
@@ -49,7 +53,9 @@ void ambilAntrian(Queue *Q, infotype *antrian) {
 
 void prosesAntrian(Queue *Q, infotype *X, infotype *antrian) {
     deQueue(Q, X);
-    *antrian -= 1;
+    if (*antrian != 0){
+    	*antrian -= 1;
+	}
     cetakAntrian(antrian);
 }
 
@@ -63,7 +69,7 @@ void printQueue(Queue Q) {
         return;
     }
     
-    address temp = Q;
+    address temp = Q.front;
     printf("Isi Queue: ");
     while (temp != NULL) {
         printf("%d -> ", temp->info);
